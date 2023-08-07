@@ -4,15 +4,34 @@
   <meta charset="utf-8">
   
   
-  <title>xingmin wang&#39;s blog</title>
+  <title>红黑树 | xingmin wang&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="xingmin wang&#39;s blog">
-<meta property="og:url" content="http://example.com/index.html">
+  <meta name="description" content="红黑树的起源二分查找具有Ologn的时间复杂度，使用二分查找的基础是数据有序。很明显数组可以完成这一条件，但是数组也有缺点，扩容，增加，删除非常不方便。而链表则没有这些缺点，但是链表却不满足随机存取，无法使用二分查找。解决方法便是二叉搜索树，而二叉搜索树的缺点是极端情况下链化又成为了链表。那么可以考虑平衡树，平衡树具有数据分布均匀的特性，但是由于其平衡要求过于严格，进行插入删除会频繁的调整树结构。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="红黑树">
+<meta property="og:url" content="http://example.com/2023/08/08/%E7%BA%A2%E9%BB%91%E6%A0%91/index.html">
 <meta property="og:site_name" content="xingmin wang&#39;s blog">
+<meta property="og:description" content="红黑树的起源二分查找具有Ologn的时间复杂度，使用二分查找的基础是数据有序。很明显数组可以完成这一条件，但是数组也有缺点，扩容，增加，删除非常不方便。而链表则没有这些缺点，但是链表却不满足随机存取，无法使用二分查找。解决方法便是二叉搜索树，而二叉搜索树的缺点是极端情况下链化又成为了链表。那么可以考虑平衡树，平衡树具有数据分布均匀的特性，但是由于其平衡要求过于严格，进行插入删除会频繁的调整树结构。">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="c:\Users\%E6%B8%90%E5%85%A5%E4%BD%B3%E5%A2%83\Desktop\hexo-blog\source_posts\%E7%BA%A2%E9%BB%91%E6%A0%91.assets\20221230200026.png#id=GIJYp&originHeight=253&originWidth=672&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title=">
+<meta property="og:image" content="c:\Users\%E6%B8%90%E5%85%A5%E4%BD%B3%E5%A2%83\Desktop\hexo-blog\source_posts\%E7%BA%A2%E9%BB%91%E6%A0%91.assets\20221230201906.png#id=qlYyK&originHeight=312&originWidth=243&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title=">
+<meta property="og:image" content="c:\Users\%E6%B8%90%E5%85%A5%E4%BD%B3%E5%A2%83\Desktop\hexo-blog\source_posts\%E7%BA%A2%E9%BB%91%E6%A0%91.assets\20221230202629.png#id=LOeTZ&originHeight=265&originWidth=1186&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title=">
+<meta property="og:image" content="c:\Users\%E6%B8%90%E5%85%A5%E4%BD%B3%E5%A2%83\Desktop\hexo-blog\source_posts\%E7%BA%A2%E9%BB%91%E6%A0%91.assets\20221230204557.png#id=fWsEZ&originHeight=262&originWidth=1322&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title=">
+<meta property="og:image" content="c:\Users\%E6%B8%90%E5%85%A5%E4%BD%B3%E5%A2%83\Desktop\hexo-blog\source_posts\%E7%BA%A2%E9%BB%91%E6%A0%91.assets\20221230205937.png#id=rAQvd&originHeight=588&originWidth=874&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title=">
+<meta property="og:image" content="c:\Users\%E6%B8%90%E5%85%A5%E4%BD%B3%E5%A2%83\Desktop\hexo-blog\source_posts\%E7%BA%A2%E9%BB%91%E6%A0%91.assets\20221230211057.png#id=jUxXa&originHeight=435&originWidth=1374&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title=">
+<meta property="og:image" content="c:\Users\%E6%B8%90%E5%85%A5%E4%BD%B3%E5%A2%83\Desktop\hexo-blog\source_posts\%E7%BA%A2%E9%BB%91%E6%A0%91.assets\20221230214656.png#id=ufNU2&originHeight=349&originWidth=1004&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title=">
+<meta property="og:image" content="c:\Users\%E6%B8%90%E5%85%A5%E4%BD%B3%E5%A2%83\Desktop\hexo-blog\source_posts\%E7%BA%A2%E9%BB%91%E6%A0%91.assets\20221230214941.png#id=yPI7l&originHeight=361&originWidth=1106&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title=">
+<meta property="og:image" content="c:\Users\%E6%B8%90%E5%85%A5%E4%BD%B3%E5%A2%83\Desktop\hexo-blog\source_posts\%E7%BA%A2%E9%BB%91%E6%A0%91.assets\20221230220030.png#id=R1VoV&originHeight=407&originWidth=676&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title=">
+<meta property="og:image" content="c:\Users\%E6%B8%90%E5%85%A5%E4%BD%B3%E5%A2%83\Desktop\hexo-blog\source_posts\%E7%BA%A2%E9%BB%91%E6%A0%91.assets\20221230222921.png#id=QWEvw&originHeight=304&originWidth=1412&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title=">
+<meta property="og:image" content="c:\Users\%E6%B8%90%E5%85%A5%E4%BD%B3%E5%A2%83\Desktop\hexo-blog\source_posts\%E7%BA%A2%E9%BB%91%E6%A0%91.assets\20221230223838.png#id=phhHv&originHeight=322&originWidth=1094&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title=">
+<meta property="og:image" content="c:\Users\%E6%B8%90%E5%85%A5%E4%BD%B3%E5%A2%83\Desktop\hexo-blog\source_posts\%E7%BA%A2%E9%BB%91%E6%A0%91.assets\20221230223942.png#id=X2yh3&originHeight=313&originWidth=817&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title=">
+<meta property="og:image" content="c:\Users\%E6%B8%90%E5%85%A5%E4%BD%B3%E5%A2%83\Desktop\hexo-blog\source_posts\%E7%BA%A2%E9%BB%91%E6%A0%91.assets\20221230224247.png#id=oCGhF&originHeight=337&originWidth=731&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title=">
+<meta property="og:image" content="c:\Users\%E6%B8%90%E5%85%A5%E4%BD%B3%E5%A2%83\Desktop\hexo-blog\source_posts\%E7%BA%A2%E9%BB%91%E6%A0%91.assets\20221230224147.png#id=XSWZ9&originHeight=281&originWidth=1046&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title=">
+<meta property="article:published_time" content="2023-08-07T16:12:31.000Z">
+<meta property="article:modified_time" content="2023-08-07T16:13:03.894Z">
 <meta property="article:author" content="xingmin wang">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="c:\Users\%E6%B8%90%E5%85%A5%E4%BD%B3%E5%A2%83\Desktop\hexo-blog\source_posts\%E7%BA%A2%E9%BB%91%E6%A0%91.assets\20221230200026.png#id=GIJYp&originHeight=253&originWidth=672&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title=">
   
     <link rel="alternate" href="/atom.xml" title="xingmin wang's blog" type="application/atom+xml">
   
@@ -71,9 +90,7 @@
 </header>
 
       <div class="outer">
-        <section id="main">
-  
-    <article id="post-红黑树" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+        <section id="main"><article id="post-红黑树" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2023/08/08/%E7%BA%A2%E9%BB%91%E6%A0%91/" class="article-date">
   <time class="dt-published" datetime="2023-08-07T16:12:31.000Z" itemprop="datePublished">2023-08-08</time>
@@ -86,8 +103,8 @@
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2023/08/08/%E7%BA%A2%E9%BB%91%E6%A0%91/">红黑树</a>
+    <h1 class="p-name article-title" itemprop="headline name">
+      红黑树
     </h1>
   
 
@@ -151,62 +168,19 @@
     </footer>
   </div>
   
-</article>
-
-
-
+    
+<nav id="article-nav">
   
-    <article id="post-hello-world" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2023/08/07/hello-world/" class="article-date">
-  <time class="dt-published" datetime="2023-08-07T15:55:52.548Z" itemprop="datePublished">2023-08-07</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
   
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2023/08/07/hello-world/">Hello World</a>
-    </h1>
+    <a href="/2023/08/07/hello-world/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Hello World</div>
+    </a>
   
+</nav>
 
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2023/08/07/hello-world/" data-id="cll12nk6d0000e4uigg58daf7" data-title="Hello World" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-    </footer>
-  </div>
   
 </article>
-
-
-
-  
 
 
 </section>
